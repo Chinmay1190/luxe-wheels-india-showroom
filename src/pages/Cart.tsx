@@ -36,13 +36,6 @@ const Cart = () => {
     toast.success('Cart cleared');
   };
 
-  const handleCheckout = () => {
-    // This would typically integrate with a payment system
-    toast.success('Redirecting to checkout...', {
-      description: 'Payment integration would be implemented here'
-    });
-  };
-
   if (state.items.length === 0) {
     return (
       <div className="min-h-screen bg-background">
@@ -191,13 +184,14 @@ const Cart = () => {
                 </div>
               </div>
 
-              <Button 
-                onClick={handleCheckout}
-                size="lg" 
-                className="w-full mt-6 luxury-button text-lg py-4"
-              >
-                Proceed to Checkout
-              </Button>
+              <Link to="/checkout">
+                <Button 
+                  size="lg" 
+                  className="w-full mt-6 luxury-button text-lg py-4"
+                >
+                  Proceed to Checkout
+                </Button>
+              </Link>
 
               <div className="mt-6 text-center text-sm text-muted-foreground">
                 <p>Secure checkout with 256-bit SSL encryption</p>
