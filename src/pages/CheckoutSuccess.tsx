@@ -13,14 +13,18 @@ import {
   Download,
   Share2,
   Star,
-  Sparkles
+  Sparkles,
+  Clock
 } from 'lucide-react';
+import { useCart } from '@/contexts/CartContext';
 
 const CheckoutSuccess = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [orderNumber] = useState(() => 
     'LC' + Date.now().toString().slice(-8) + Math.floor(Math.random() * 1000)
   );
+  const [purchaseTime] = useState(() => new Date());
+  const { state } = useCart();
 
   useEffect(() => {
     setIsVisible(true);
@@ -33,6 +37,51 @@ const CheckoutSuccess = () => {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(price);
+  };
+
+  const formatDateTime = (date: Date) => {
+    return new Intl.DateTimeFormat('en-IN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      timeZoneName: 'short'
+    }).format(date);
+  };
+
+  const downloadReceipt = () => {
+    const receiptContent = `
+LUXURY CARS - PURCHASE RECEIPT
+===============================
+
+Order Number: ${orderNumber}
+Purchase Date: ${formatDateTime(purchaseTime)}
+
+ITEMS PURCHASED:
+${state.items.map(item => 
+  `${item.car.name} (${item.car.brand}) x${item.quantity} - ${formatPrice(item.car.price * item.quantity)}`
+).join('\n')}
+
+Subtotal: ${formatPrice(state.total)}
+Insurance (2%): ${formatPrice(state.total * 0.02)}
+Total Amount Paid: ${formatPrice(state.total + (state.total * 0.02))}
+
+Thank you for your luxury car purchase!
+Contact: +91 98765 43210
+Email: support@luxurycars.com
+    `;
+
+    const blob = new Blob([receiptContent], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `LuxuryCars_Receipt_${orderNumber}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -60,10 +109,15 @@ const CheckoutSuccess = () => {
               Congratulations on your luxury car purchase
             </p>
             
-            <div className="flex items-center justify-center space-x-2 text-luxury-gold">
+            <div className="flex items-center justify-center space-x-2 text-luxury-gold mb-4">
               <Sparkles className="h-5 w-5" />
               <span className="font-medium">Order #{orderNumber}</span>
               <Sparkles className="h-5 w-5" />
+            </div>
+
+            <div className="flex items-center justify-center space-x-2 text-muted-foreground">
+              <Clock className="h-4 w-4" />
+              <span className="text-sm">Purchased on {formatDateTime(purchaseTime)}</span>
             </div>
           </div>
 
@@ -78,23 +132,34 @@ const CheckoutSuccess = () => {
               </h2>
               
               <div className="space-y-4">
-                <div className="flex items-center space-x-4 p-4 bg-muted/20 rounded-lg">
-                  <img
-                    src="https://images.unsplash.com/photo-1563720223185-11003d516935?w=400"
-                    alt="Luxury Car"
-                    className="w-20 h-16 object-cover rounded"
-                  />
-                  <div className="flex-1">
-                    <p className="font-semibold">Sample Luxury Vehicle</p>
-                    <p className="text-sm text-muted-foreground">2024 Model</p>
+                {state.items.map((item) => (
+                  <div key={item.car.id} className="flex items-center space-x-4 p-4 bg-muted/20 rounded-lg">
+                    <img
+                      src={item.car.image}
+                      alt={item.car.name}
+                      className="w-20 h-16 object-cover rounded"
+                    />
+                    <div className="flex-1">
+                      <p className="font-semibold">{item.car.name}</p>
+                      <p className="text-sm text-muted-foreground">{item.car.brand} • {item.car.year}</p>
+                      <p className="text-sm text-muted-foreground">Quantity: {item.quantity}</p>
+                    </div>
+                    <p className="font-bold text-luxury-gold">{formatPrice(item.car.price * item.quantity)}</p>
                   </div>
-                  <p className="font-bold text-luxury-gold">{formatPrice(5000000)}</p>
-                </div>
+                ))}
                 
-                <div className="border-t pt-4">
+                <div className="border-t pt-4 space-y-2">
+                  <div className="flex justify-between">
+                    <span>Subtotal</span>
+                    <span>{formatPrice(state.total)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Insurance (2%)</span>
+                    <span>{formatPrice(state.total * 0.02)}</span>
+                  </div>
                   <div className="flex justify-between text-lg font-bold">
                     <span>Total Paid</span>
-                    <span className="text-luxury-gold">{formatPrice(5900000)}</span>
+                    <span className="text-luxury-gold">{formatPrice(state.total + (state.total * 0.02))}</span>
                   </div>
                 </div>
               </div>
@@ -146,7 +211,11 @@ const CheckoutSuccess = () => {
 
           {/* Action Buttons */}
           <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-12">
-            <Button size="lg" className="luxury-button flex items-center space-x-2">
+            <Button 
+              size="lg" 
+              className="luxury-button flex items-center space-x-2"
+              onClick={downloadReceipt}
+            >
               <Download className="h-5 w-5" />
               <span>Download Receipt</span>
             </Button>

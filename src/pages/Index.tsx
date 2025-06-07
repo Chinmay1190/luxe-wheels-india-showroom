@@ -6,6 +6,7 @@ import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CarCard } from '@/components/CarCard';
+import HeroCarousel from '@/components/HeroCarousel';
 import { brands } from '@/data/cars';
 import { ChevronRight, Star, Shield, Award, Zap } from 'lucide-react';
 
@@ -24,37 +25,30 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      {/* Hero Section */}
+      {/* Hero Section with Carousel */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 hero-gradient"></div>
-        <div className="absolute inset-0 bg-black/40"></div>
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-fixed"
-          style={{
-            backgroundImage: 'url("https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920&q=80")'
-          }}
-        ></div>
+        <HeroCarousel />
         
         <div className="relative z-10 text-center text-white max-w-4xl mx-auto px-4">
-          <Badge className="mb-6 bg-luxury-gold/20 text-luxury-gold border-luxury-gold/30">
+          <Badge className="mb-6 bg-luxury-gold/20 text-luxury-gold border-luxury-gold/30 backdrop-blur-sm">
             India's Premier Luxury Car Destination
           </Badge>
           <h1 className="text-4xl md:text-7xl font-bold mb-6 animate-fade-in">
             Experience
             <span className="text-gradient block">Automotive Excellence</span>
           </h1>
-          <p className="text-xl md:text-2xl mb-8 text-gray-200 animate-fade-in">
+          <p className="text-xl md:text-2xl mb-8 text-gray-200 animate-fade-in backdrop-blur-sm bg-black/20 rounded-lg p-4">
             Discover the world's most prestigious automotive brands in India. From Rolls-Royce to McLaren.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-scale-in">
             <Link to="/brands">
-              <Button size="lg" className="luxury-button text-lg px-8 py-4">
+              <Button size="lg" className="luxury-button text-lg px-8 py-4 backdrop-blur-sm">
                 Explore Collections
                 <ChevronRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
             <Link to="/about">
-              <Button size="lg" variant="outline" className="text-lg px-8 py-4 bg-white/10 border-white/30 text-white hover:bg-white/20">
+              <Button size="lg" variant="outline" className="text-lg px-8 py-4 bg-white/10 border-white/30 text-white hover:bg-white/20 backdrop-blur-sm">
                 Learn More
               </Button>
             </Link>
@@ -63,12 +57,12 @@ const Index = () => {
 
         {/* Floating Elements */}
         <div className="absolute top-20 left-10 animate-float">
-          <div className="w-20 h-20 rounded-full bg-luxury-gold/10 flex items-center justify-center">
+          <div className="w-20 h-20 rounded-full bg-luxury-gold/10 flex items-center justify-center backdrop-blur-sm">
             <Star className="h-8 w-8 text-luxury-gold" />
           </div>
         </div>
         <div className="absolute bottom-20 right-10 animate-float" style={{ animationDelay: '1s' }}>
-          <div className="w-16 h-16 rounded-full bg-luxury-platinum/10 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-full bg-luxury-platinum/10 flex items-center justify-center backdrop-blur-sm">
             <Award className="h-6 w-6 text-luxury-platinum" />
           </div>
         </div>
